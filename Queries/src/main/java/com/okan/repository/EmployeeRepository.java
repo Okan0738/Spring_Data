@@ -4,6 +4,7 @@ import com.okan.entity.Department;
 import com.okan.entity.Employee;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -44,8 +45,49 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
     List<Employee> findByEmailIsNull();
 
     @Query("SELECT employee FROM Employee  employee where employee.email='amcnee1@google.es' " )
-    Employee retrieveEmployeeDetailsByEmail();
+    Employee retrieveEmployeeDetailsByEmail(String email);
 
-    @Query("select e from Employee  e where e.salary>8000")
-    Integer retrieveEmployeeSalary();
+    @Query("select e from Employee  e where e.salary<>?1")
+    Integer retrieveEmployeeSalary(int salary);
+
+    @Query("select e from Employee e where e.firstName like ?1")
+    List<Employee> retrieveEmployeeFirstNameLike(String pattern);
+
+    @Query("select e from Employee e where e.salary < ?1")
+    List<Employee> retrieveEmployeeSalaryLessThan(int salary);
+
+    @Query("select e.firstName from Employee e where e.salary < ?1")
+    List<String> retrieveEmployeeSalaryGreaterThan(int salary);
+
+    @Query("")
+    List<String> retrieveEmployeeSalaryBetween(int salary1, int salary2);
+
+    @Query("select e from Employee e where e.hireDate>?1")
+    List<Employee> retrieveEmployeeHireDateBefore(LocalDate date);
+
+    @Query("select e from Employee e where e.email is null ")
+    List<Employee> retrieveEmployeeEmailIsNull();
+
+    @Query("SELECT e FROM Employee e WHERE e.email IS NOT NULL")
+    List<Employee> retrieveEmployeeEmailIsNotNull();
+
+    @Query("SELECT e FROM Employee e ORDER BY e.salary")
+    List<Employee> retrieveEmployeeSalaryOrderAsc();
+
+    @Query("SELECT e FROM Employee e ORDER BY e.salary DESC")
+    List<Employee> retrieveEmployeeSalaryOrderDesc();
+
+    // Native Query
+    @Query(value = "SELECT * FROM employees WHERE salary = ?1",nativeQuery = true)
+    List<Employee> retrieveEmployeeDetailBySalary(int salary);
+
+    @Query("SELECT e FROM Employee e WHERE e.salary = :salary")
+    List<Employee> retrieveEmployeeSalary1(@Param("salary") int salary);
+
+
+
+
+
+
+
 }
